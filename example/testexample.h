@@ -100,7 +100,8 @@ private:
             (jsonDocument.isArray() ? QStringLiteral("api/tests/batch") : QStringLiteral("api/tests"));
         if (url.isValid()) {
             qDebug().noquote() << "Submitting tests" << url << jsonDocument.toJson(QJsonDocument::Indented);
-            const QNetworkRequest request(url);
+            QNetworkRequest request(url);
+            request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
             networkReplies.insert(networkManager->post(request, jsonDocument.toJson(QJsonDocument::Compact)));
             emit networkRepliesChanged();
         }
