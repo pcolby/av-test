@@ -59,6 +59,7 @@ protected slots:
             QEventLoop loop;
             connect(this, &AV::networkRepliesChanged, &loop, &QEventLoop::quit);
             while (!networkReplies.isEmpty()) {
+                qDebug() << "Waiting for network replies to finish";
                 loop.exec();
             }
         }
@@ -97,8 +98,8 @@ private:
         static const QString baseUrl = QProcessEnvironment::systemEnvironment().value(QStringLiteral("APPVEYOR_API_URL"));
         const QUrl url = baseUrl.isEmpty() ? QUrl() : baseUrl +
             (jsonDocument.isArray() ? QStringLiteral("api/tests/batch") : QStringLiteral("api/tests"));
-        qInfo().noquote() << url << jsonDocument.toJson(QJsonDocument::Indented);
         if (url.isValid()) {
+            qDebug().noquote() << "Submitting tests" << url << jsonDocument.toJson(QJsonDocument::Indented);
             const QNetworkRequest request(url);
             networkReplies.insert(networkManager->post(request, jsonDocument.toJson(QJsonDocument::Compact)));
             emit networkRepliesChanged();
@@ -109,9 +110,9 @@ private slots:
     void onReplyFinished(QNetworkReply * reply)
     {
         if (reply->error()) {
-            qWarning() << "AppVeyor API" << reply->errorString();
+            qWarning() << "Failed to submit tests to AppVeyor API" << reply->errorString();
         }
-        qInfo() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->readAll();
+        qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->readAll();
         networkReplies.remove(reply);
         emit networkRepliesChanged();
         reply->deleteLater();
