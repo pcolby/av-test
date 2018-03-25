@@ -116,6 +116,7 @@ private slots:
         qDebug() << networkReplies.count() << "known replies";
         qDebug() << reply->url() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() << reply->readAll();
         networkReplies.remove(reply);
+        reply->close();
         reply->deleteLater();
         qDebug() << networkReplies.count() << "replies left";
         emit networkRepliesChanged();
