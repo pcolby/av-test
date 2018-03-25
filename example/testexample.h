@@ -36,21 +36,24 @@ protected slots:
                 tests.append(appveyorTest(method.name().data()));
             }
         }
-        //submitTests(QJsonDocument(tests));
+        submitTests(QJsonDocument(tests));
     }
 
     void init()
     {
         testStartTime = QDateTime::currentMSecsSinceEpoch();
-        submitTests(QJsonDocument(appveyorTest(QTest::currentTestFunction(), "Runnnig")));
+        // It would make sense to set the running state here, but if the rest responds too quickly
+        // (which is idealy would) then AppVeyor has race conditions that often causes the final
+        // state (as reported in cleanup()) being overwritten by this pending state. This "Running"
+        // state is displayed the same as the "None" state we reported in initTestCase() anyway.
+        //submitTests(QJsonDocument(appveyorTest(QTest::currentTestFunction(), "Runnnig")));
     }
 
     void cleanup()
     {
-        //const qint64 duration = testStartTime - QDateTime::currentMSecsSinceEpoch();
-        //const QString outcome(
-        //    QTest::currentTestFailed() ? QStringLiteral("Failed") : QStringLiteral("Passed"));
-        //submitTests(QJsonDocument(appveyorTest(QTest::currentTestFunction(), outcome, duration)));
+        const qint64 duration = testStartTime - QDateTime::currentMSecsSinceEpoch();
+        const QString outcome(QTest::currentTestFailed() ? QStringLiteral("Failed") : QStringLiteral("Passed"));
+        submitTests(QJsonDocument(appveyorTest(QTest::currentTestFunction(), outcome, duration)));
     }
 
     void cleanupTestCase()
@@ -110,16 +113,13 @@ private:
 private slots:
     void onReplyFinished(QNetworkReply * reply)
     {
+        qDebug() << "Reply finished" << reply->url() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         if (reply->error()) {
             qWarning() << "Failed to submit tests to AppVeyor API" << reply->errorString();
         }
-        qDebug() << networkReplies.count() << "known replies";
-        qDebug() << reply->url() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() << reply->readAll();
         networkReplies.remove(reply);
-        reply->close();
-        reply->deleteLater();
-        qDebug() << networkReplies.count() << "replies left";
         emit networkRepliesChanged();
+        reply->deleteLater();
     }
 
 signals:
