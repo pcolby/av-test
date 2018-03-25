@@ -34,4 +34,9 @@ test_script:
   - '%make% check'
 
 after_test:
+  - echo 123
+  - ps: Start-sleep -s 5
+
+on_failure:
+  - echo 456
   - ps: Start-sleep -s 5
