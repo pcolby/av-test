@@ -39,4 +39,4 @@ after_test:
 
 on_failure:
   - echo 456
-  - ps: Start-sleep -s 5
+  - ps: Start-sleep -s 30
