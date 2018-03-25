@@ -32,3 +32,4 @@ build_script:
 test_script:
   - cd %APPVEYOR_BUILD_FOLDER%-build
   - '%make% check'
+  - ps: Start-sleep -s 5
