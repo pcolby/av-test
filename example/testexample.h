@@ -47,10 +47,10 @@ protected slots:
 
     void cleanup()
     {
-        const qint64 duration = testStartTime - QDateTime::currentMSecsSinceEpoch();
-        const QString outcome(
-            QTest::currentTestFailed() ? QStringLiteral("Failed") : QStringLiteral("Passed"));
-        submitTests(QJsonDocument(appveyorTest(QTest::currentTestFunction(), outcome, duration)));
+        //const qint64 duration = testStartTime - QDateTime::currentMSecsSinceEpoch();
+        //const QString outcome(
+        //    QTest::currentTestFailed() ? QStringLiteral("Failed") : QStringLiteral("Passed"));
+        //submitTests(QJsonDocument(appveyorTest(QTest::currentTestFunction(), outcome, duration)));
     }
 
     void cleanupTestCase()

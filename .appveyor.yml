@@ -32,11 +32,3 @@ build_script:
 test_script:
   - cd %APPVEYOR_BUILD_FOLDER%-build
   - '%make% check'
-
-after_test:
-  - echo 123
-  - ps: Start-sleep -s 5
-
-on_failure:
-  - echo 456
-  - ps: Start-sleep -s 30
