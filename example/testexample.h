@@ -42,7 +42,7 @@ protected slots:
     void init()
     {
         testStartTime = QDateTime::currentMSecsSinceEpoch();
-        submitTests(QJsonDocument(appveyorTest(QTest::currentTestFunction(), "Runnnig")));
+        //submitTests(QJsonDocument(appveyorTest(QTest::currentTestFunction(), "Runnnig")));
     }
 
     void cleanup()
