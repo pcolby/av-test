@@ -59,7 +59,7 @@ protected slots:
             QEventLoop loop;
             connect(this, &AV::networkRepliesChanged, &loop, &QEventLoop::quit);
             while (!networkReplies.isEmpty()) {
-                qDebug() << "Waiting for network replies to finish";
+                qDebug() << "Waiting for" << networkReplies.count() << "network replies to finish";
                 loop.exec();
             }
         }
@@ -113,8 +113,10 @@ private slots:
         if (reply->error()) {
             qWarning() << "Failed to submit tests to AppVeyor API" << reply->errorString();
         }
-        qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->readAll();
+        qDebug() << networkReplies.count() << "known replies";
+        qDebug() << reply->url() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() << reply->readAll();
         networkReplies.remove(reply);
+        qDebug() << networkReplies.count() << "replies left";
         emit networkRepliesChanged();
         reply->deleteLater();
     }
